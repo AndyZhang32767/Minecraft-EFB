@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "airac",
+  "version": "${version}",
+  "name": "EFB",
+  "description": "Optional server-synchronized aviation charts and a personal NAV/ARC navigation display.",
+  "authors": [
+    "EFB contributors"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "mixins": ["airac.compat.mixins.json"],
+  "entrypoints": {
+    "client": [
+      "dev.airac.AiracClient"
+    ],
+    "main": [
+      "dev.airac.AiracServer"
+    ]
+  },
+  "suggests": {
+    "xaeroworldmap": ">=1.41.2",
+    "flightassistant": ">=3.0.1"
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": ">=${fabric_version}"
+  }
+}

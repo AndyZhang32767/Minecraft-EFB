@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "airac_test",
+  "version": "1.0.0",
+  "name": "EFB Client Tests",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "dev.airac.SyncGameTest"
+    ]
+  },
+  "depends": {
+    "airac": "*"
+  }
+}

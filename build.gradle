@@ -1,0 +1,64 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version '1.17.21'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://api.modrinth.com/maven' }
+    maven { url = 'https://maven.architectury.dev' }
+    maven { url = 'https://maven.isxander.dev/releases' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Optional integration: FA remains a separate mod and is never bundled into EFB.
+    modCompileOnly 'maven.modrinth:flightassistant:3.0.1+mc1.21.11-fabric'
+    modCompileOnly 'dev.architectury:architectury-fabric:19.0.1'
+    compileOnly 'org.jetbrains.kotlin:kotlin-stdlib:2.2.0'
+    if (project.hasProperty('withFlightAssistant')) {
+        modRuntimeOnly 'maven.modrinth:flightassistant:3.0.1+mc1.21.11-fabric'
+        modRuntimeOnly 'dev.architectury:architectury-fabric:19.0.1'
+        modRuntimeOnly 'net.fabricmc:fabric-language-kotlin:1.13.2+kotlin.2.1.20'
+        modRuntimeOnly 'dev.isxander:yet-another-config-lib:3.8.1+1.21.11-fabric'
+    }
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+processResources {
+    def metadata = [version: project.version, loader_version: project.loader_version, fabric_version: project.fabric_version]
+    inputs.properties metadata
+    filesMatching('fabric.mod.json') { expand(metadata) }
+}
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = 'UTF-8'
+}
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+test { useJUnitPlatform() }
+jar { from('LICENSE') { rename { "${it}_${project.base.archivesName.get()}" } } }
+
+fabricApi.configureTests {
+    createSourceSet = true
+    modId = "airac_test"
+    enableGameTests = false
+    enableClientGameTests = true
+    eula = false
+}
+
+// Minecraft packet tasks can run outside the gametest scheduler; retain actual packet assertions.
+tasks.named('runClientGameTest', JavaExec) {
+        systemProperty 'fabric.client.gametest.disableNetworkSynchronizer', 'true'
+}
