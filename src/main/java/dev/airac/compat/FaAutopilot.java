@@ -68,6 +68,7 @@ final class FaAutopilot implements FlightAssistantIntegration.Adapter, ThrustSou
         verticalController=new PIDController(1.8,.1,.35,10,-85,85);
         commandedPitch=bus.getData().getPitch();
         if(next.ilsFrequency!=0) {
+            // Approach ILS always uses RADIO 1. RADIO 2 AUTO keeps tuning the nearest VOR.
             Radio radio=chart.radios.getFirst();radio.mode=Kind.ILS;radio.frequency=next.ilsFrequency;
         }
         var ap=bus.getAutoflight();

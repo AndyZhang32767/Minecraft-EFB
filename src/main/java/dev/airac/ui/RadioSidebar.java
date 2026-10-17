@@ -25,23 +25,23 @@ final class RadioSidebar {
         radio.frequency=0;values[index]="";errors[index]="";app.save();host.refresh();
     }
     private int block(int i){return 114+i*190-offset;}
-    private boolean manual(int i){return i!=0 || !app.chart.radios.getFirst().auto;}
+    private boolean manual(int i){return !app.chart.radios.get(i).auto;}
     void init(){
         host.listTop=114;host.listBottom=host.height-34;
         for(int i=0;i<2;i++){
             int index=i,y=block(i);Radio radio=app.chart.radios.get(i);boolean editable=app.canEditPlans() && manual(i);
             if(values[i]==null)values[i]=RadioNavigation.frequency(radio.mode,radio.frequency);
-            if(i==0 && y+12>=114 && y+30<=host.listBottom)
+            if(y+12>=114 && y+30<=host.listBottom)
                 host.sideButton(y+12,Text.literal(radio.auto?Ui.tr("ui.airac.auto_short"):Ui.tr("ui.airac.manual")),()->{
-                    radio.auto=!radio.auto;errors[0]="";
-                    if(radio.auto && !(dev.airac.compat.FlightAssistantIntegration.active() && radio.mode==Kind.ILS)){
+                    radio.auto=!radio.auto;errors[index]="";
+                    if(radio.auto && !(index==0 && dev.airac.compat.FlightAssistantIntegration.active() && radio.mode==Kind.ILS)){
                         var player=MinecraftClient.getInstance().player;
                         if(player!=null)RadioNavigation.tuneNearestVor(radio,app.chart,player.getX(),player.getZ());
                     }
-                    values[0]=RadioNavigation.frequency(radio.mode,radio.frequency);
+                    values[index]=RadioNavigation.frequency(radio.mode,radio.frequency);
                     app.save();host.refresh();
                 },app.canEditPlans());
-            int mode=i==0?34:14,fieldY=i==0?65:45,tuneY=i==0?87:67;
+            int mode=34,fieldY=65,tuneY=87;
             if(y+mode>=114 && y+mode+18<=host.listBottom)
                 host.sideButton(y+mode,Text.literal(radio.mode.name()),()->cycle(index),editable);
             if(y+fieldY>=114 && y+fieldY+17<=host.listBottom){
@@ -76,12 +76,12 @@ final class RadioSidebar {
         for(int i=0;i<2;i++){
             int y=block(i);Radio radio=app.chart.radios.get(i);
             Ui.text(c,Ui.tr(i==0?"ui.airac.radio_1":"ui.airac.radio_2"),10,y,Ui.CYAN);
-            Ui.text(c,Ui.tr("ui.airac.freq")+" / "+RadioNavigation.unit(radio.mode),10,y+(i==0?55:35),Ui.MUTED);
+            Ui.text(c,Ui.tr("ui.airac.freq")+" / "+RadioNavigation.unit(radio.mode),10,y+55,Ui.MUTED);
             var signal=client.player==null?null:RadioNavigation.receive(app.chart,radio,client.player.getX(),client.player.getY(),
                     client.player.getZ(),NavMath.heading(client.player.getYaw()));
             String status=!errors[i].isEmpty()?errors[i]:radio.frequency==0?"NOT TUNED":signal==null?"NO SIGNAL":
                     signal.station().ident+" / "+(radio.mode==Kind.VOR?signal.station().vorMode.name():radio.mode.name());
-            int info=y+(i==0?111:91);
+            int info=y+111;
             Ui.fit(c,status,10,info,host.side-20,signal==null?Ui.AMBER:Ui.GREEN);
             Ui.fit(c,RadioNavigation.frequency(radio.mode,radio.frequency)+" "+RadioNavigation.unit(radio.mode),
                     10,info+12,host.side-20,Ui.MUTED);

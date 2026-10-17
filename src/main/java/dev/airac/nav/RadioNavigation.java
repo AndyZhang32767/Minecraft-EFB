@@ -76,7 +76,7 @@ public final class RadioNavigation {
         }
         return best;
     }
-    /** Point RADIO 1 at that VOR. Returns whether the stored tuning changed. */
+    /** Point this receiver at that VOR. Returns whether the stored tuning changed. */
     public static boolean tuneNearestVor(Radio radio, ChartData chart, double x, double z) {
         Point station=nearestVor(chart,x,z);
         int frequency=station==null?0:station.frequency;

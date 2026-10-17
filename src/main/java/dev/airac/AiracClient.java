@@ -76,9 +76,13 @@ public final class AiracClient implements ClientModInitializer {
         rangeUpHeld = stepRange(client, rangeUp, rangeUpHeld, 1);
         rangeDownHeld = stepRange(client, rangeDown, rangeDownHeld, -1);
         if (client.world == null || client.player == null || identity == null) return;
-        var primary=chart.radios.getFirst();
-        if(primary.auto && !(FlightAssistantIntegration.active() && primary.mode==dev.airac.data.ChartData.Kind.ILS)
-                && dev.airac.nav.RadioNavigation.tuneNearestVor(primary,chart,client.player.getX(),client.player.getZ())) save();
+        boolean retuned=false;
+        for(int i=0;i<chart.radios.size();i++){
+            var radio=chart.radios.get(i);
+            boolean ilsOnPrimary=i==0 && FlightAssistantIntegration.active() && radio.mode==dev.airac.data.ChartData.Kind.ILS;
+            if(radio.auto && !ilsOnPrimary && dev.airac.nav.RadioNavigation.tuneNearestVor(radio,chart,client.player.getX(),client.player.getZ())) retuned=true;
+        }
+        if(retuned) save();
         FlightAssistantIntegration.tick();
         // Planning is safe while standing in a menu; sequencing resumes after closing it.
         if (client.currentScreen == null && writable && !FlightAssistantIntegration.active() && tracker.tick(chart, client.player.getX(), client.player.getZ(),

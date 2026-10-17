@@ -6,14 +6,7 @@ public final class NavMath {
     public static double normalize(double angle) { return (angle % 360 + 360) % 360; }
     public static double heading(double minecraftYaw) { return normalize(minecraftYaw + 180); }
     public static double bearing(double dx, double dz) { return normalize(Math.toDegrees(Math.atan2(dx, -dz))); }
-    /** Front pointer, rear reciprocal line, or hidden when the station is only abeam. */
-    public static int vorCue(double relative) {
-        double signed=normalize(relative+180)-180;
-        double abs=Math.abs(signed);
-        if(abs<=60)return 0;
-        if(abs>=120)return 1;
-        return -1;
-    }
+    /** Opposite bearing, signed to [-180, 180). The rear pointer uses this. */
     public static double reciprocal(double relative) {
         double signed=normalize(relative+180)-180;
         return signed>=0?signed-180:signed+180;

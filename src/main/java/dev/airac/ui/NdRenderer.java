@@ -92,7 +92,7 @@ public final class NdRenderer {
         double dt=needleNanos==0?0:Math.min(0.1,(now-needleNanos)*1e-9);needleNanos=now;
         boolean[] ndRadio={s.ndRadio1,s.ndRadio2};
         Set<String> pointed=new HashSet<>();
-        record Cue(int radio,int cue,double aim,double relative) {}
+        record Cue(int radio,double relative) {}
         List<Cue> cues=new ArrayList<>();
         for(int i=0;i<2;i++){
             if(!ndRadio[i])continue;
@@ -101,10 +101,8 @@ public final class NdRenderer {
             double bearing=NavMath.bearing(signal.station().x-px,signal.station().z-pz);
             needleBearing[i]=NeedleSlew.step(needleBearing[i],bearing,140,dt);
             double relative=NavMath.normalize(needleBearing[i]-heading+180)-180;
-            int cue=NavMath.vorCue(relative);
-            if(cue<0)continue;
             pointed.add(signal.station().id);
-            cues.add(new Cue(i,cue,cue>0?NavMath.reciprocal(relative):relative,relative));
+            cues.add(new Cue(i,relative));
         }
         List<ChartData.Point> points=map?new ArrayList<>(chart.points):new ArrayList<>();
         points.sort(Comparator.comparingInt(p->p==target?0:plan!=null && plan.pointIds.contains(p.id)?1:2));
@@ -140,17 +138,16 @@ public final class NdRenderer {
                 break;
             }
         }
-        // The pointer is laid out past the ND. Submit only the slice inside the window, without the
-        // panel scissor dropping a stroke that merely crosses the edge.
+        // NAV shaft runs from the arrow to the opposite compass ring. ARC keeps a separate rear segment.
+        // A stroke is clipped only where it leaves the ND window.
         double clipLeft=left+4,clipTopD=clipTop,clipRight=left+size-4,clipBottomD=clipBottom;
         c.disableScissor();
         for(var cue:cues){
-            if(cue.cue>0){
-                double aim=cue.aim;
-                Ui.bearingLine(c,cx,cy,arc?Math.clamp(aim,-90,90):aim,radius,cue.radio==1,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);continue;
-            }
-            if(arc) Ui.arcPointer(c,cx,cy,Math.clamp(cue.relative,-90,90),radius,cue.radio==1,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);
-            else Ui.bearingNeedle(c,cx,cy,cue.relative,radius,radius*0.4,cue.radio==1,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);
+            boolean doubled=cue.radio==1;
+            if(arc){
+                Ui.arcPointer(c,cx,cy,cue.relative,radius,doubled,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);
+                Ui.bearingLine(c,cx,cy,NavMath.reciprocal(cue.relative),radius,doubled,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);
+            }else Ui.bearingNeedle(c,cx,cy,cue.relative,radius,radius,doubled,Ui.CYAN,clipLeft,clipTopD,clipRight,clipBottomD);
         }
         c.enableScissor(left+4,clipTop,left+size-4,clipBottom);
         var matrices=c.getMatrices();matrices.pushMatrix();

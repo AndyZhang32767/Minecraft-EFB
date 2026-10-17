@@ -22,7 +22,7 @@ public final class ChartData {
     public static final class Radio {
         public Kind mode = Kind.NDB;
         public int frequency;
-        /** RADIO 1 only. While set, tuning follows the nearest in-range VOR. */
+        /** While set, tuning follows the nearest in-range VOR. Approach ILS stays on RADIO 1. */
         public boolean auto;
     }
     public List<Radio> radios = new ArrayList<>(List.of(new Radio(), new Radio()));

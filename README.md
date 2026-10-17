@@ -1,13 +1,13 @@
 # EFB
 
-Minecraft **1.21.11 / Fabric / Java 21** 自适应客户端／服务端航空航图模组，当前版本 0.10.0。
+Minecraft **1.21.11 / Fabric / Java 21** 自适应客户端／服务端航空航图模组，当前版本 0.10.1。
 
 以航空航图、ND 仪表为交互参考，自行绘制标注界面。卫星底图直接使用已安装的 Xaero's World Map；纯色航图和 ND 可独立使用。不包含 Xaero 或 Navigraph 的代码、素材或地图文件。支持 NDB、VOR/DME/VORDME 和 ILS 导航台，以及两套独立无线电调谐；本版不增加无线电 HUD/ND 导航显示。
 
 ## 安装与开发
 
 1. 安装 Minecraft 1.21.11、Fabric Loader **0.18.4 或更高**。
-2. 将 **Fabric API 0.141.4+1.21.11** 和本项目构建得到的 `build/libs/efb-0.10.0.jar` 放入游戏实例的 `mods` 目录。卫星底图需要同实例安装 **Xaero's World Map 1.41.2（Minecraft 1.21.11 Fabric 版）**。
+2. 将 **Fabric API 0.141.4+1.21.11** 和本项目构建得到的 `build/libs/efb-0.10.1.jar` 放入游戏实例的 `mods` 目录。卫星底图需要同实例安装 **Xaero's World Map 1.41.2（Minecraft 1.21.11 Fabric 版）**。
 3. 自动驾驶需要另行安装 **FlightAssistant 3.0.1（1.21.11 Fabric）** 及它要求的 Fabric Language Kotlin、Architectury、YACL。EFB 不打包或修改 FA，服务端不需要安装 FA。启动时自动检测 FA；未安装或兼容接口未能初始化时，隐藏并禁用 PERF/性能和 TMPY/应用，航图、个人计划及 ND 仍可使用。
 3. 进入单人世界或服务器，按 **N** 打开航图。服务器端可选安装同一 JAR 以启用共享航图，详见 [服务器同步](SERVER_SYNC.md)。
 4. 中文界面随 Minecraft 的「简体中文」语言设置启用。

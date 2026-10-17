@@ -73,6 +73,11 @@ class RadioNavigationTest {
         near.radius=100;assertTrue(RadioNavigation.tuneNearestVor(radio,c,0,0));
         assertEquals(Kind.VOR,radio.mode);assertEquals(near.frequency,radio.frequency);
         assertFalse(RadioNavigation.tuneNearestVor(radio,c,0,0));
+        radio.mode=Kind.NDB;radio.frequency=350;
+        Radio second=c.radios.get(1);
+        assertTrue(RadioNavigation.tuneNearestVor(second,c,0,0));
+        assertEquals(Kind.VOR,second.mode);assertEquals(near.frequency,second.frequency);
+        assertEquals(Kind.NDB,radio.mode);assertEquals(350,radio.frequency);
     }
     @Test void ndbTracksTrueAndRelativeBearingAsHeadingChanges() {
         ChartData c=new ChartData();station(c,Kind.NDB,100,0,0,350);Radio r=tune(c,0,Kind.NDB,350);

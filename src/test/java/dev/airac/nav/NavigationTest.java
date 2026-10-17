@@ -42,11 +42,11 @@ class NavigationTest {
         assertEquals(200,NavMath.captureRadius(400,32));
         assertEquals(200,NavMath.captureRadius(800,32));
     }
-    @Test void cruiseVorIsHiddenAbeamAndReversedWhenBehind() {
-        assertEquals(0,NavMath.vorCue(0));assertEquals(0,NavMath.vorCue(60));
-        assertEquals(-1,NavMath.vorCue(90));assertEquals(-1,NavMath.vorCue(-100));
-        assertEquals(1,NavMath.vorCue(180));assertEquals(1,NavMath.vorCue(-150));
-        assertEquals(0,NavMath.reciprocal(180),1e-9);assertEquals(-30,NavMath.reciprocal(150),1e-9);
+    @Test void rearPointerUsesTheOppositeBearing() {
+        assertEquals(0,NavMath.reciprocal(180),1e-9);
+        assertEquals(-30,NavMath.reciprocal(150),1e-9);
+        assertEquals(90,NavMath.reciprocal(-90),1e-9);
+        assertEquals(180,NavMath.normalize(NavMath.reciprocal(0)+360),1e-9);
     }
     @Test void needleTakesTheShortTurnAndDoesNotSnapAcrossNorth() {
         assertEquals(10,NeedleSlew.step(350,10,100,0.2),1e-9);
